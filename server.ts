@@ -123,18 +123,21 @@ async function startServer() {
         }
     });
 
-    // 创建商品接口 (升级版)
+    // 創建商品介面 (支援動態 Options 和 Variants)
     app.post("/api/products", upload.single("image"), async (req, res) => {
         try {
-            // 接收前端传来的所有新字段
-            const { name, price, dimensions, material, hardware_finishes, description } = req.body;
+            // 接收前端傳來的所有新欄位
+            const { name, price, dimensions, material, hardware_finishes, description, options, variants } = req.body;
             const id = Date.now().toString();
             const image_url = req.file ? "/uploads/" + req.file.filename : "";
 
-            // 插入数据库
+            const optionsJson = options ? options : null;
+            const variantsJson = variants ? variants : null;
+
+            // 插入資料庫
             await pool.query(
-                "INSERT INTO products (id, name, price, dimensions, material, hardware_finishes, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                [id, name, price, dimensions || "", material || "", hardware_finishes || "", description || "", image_url]
+                "INSERT INTO products (id, name, price, dimensions, material, hardware_finishes, description, image_url, options, variants) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [id, name, price, dimensions || "", material || "", hardware_finishes || "", description || "", image_url, optionsJson, variantsJson]
             );
 
             res.status(201).json({ success: true, id, image_url });

@@ -80,6 +80,38 @@
                             class="w-full border border-gray-300 p-3 text-sm focus:outline-none focus:ring-1 focus:ring-aime-charcoal focus:border-aime-charcoal transition-all font-mono"></textarea>
                         <span class="text-xs text-gray-400 mt-1 block" id="finishes-error"></span>
                     </div>
+
+                    <!-- 動態商品選項與變體區塊 -->
+                    <div class="border-t border-gray-200 mt-6 pt-6 pb-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm tracking-widest text-gray-400 uppercase">Product Options & Variants</h3>
+                            <button type="button" id="add-option-btn" class="text-xs text-aime-gold border border-aime-gold px-3 py-1.5 hover:bg-aime-gold hover:text-white transition-colors duration-300">
+                                + ADD OPTION
+                            </button>
+                        </div>
+
+                        <!-- 選項建構區 -->
+                        <div id="options-container" class="space-y-4 mb-6"></div>
+
+                        <!-- 變體 (SKU) 預覽列表 -->
+                        <div id="variants-section" class="hidden">
+                            <label class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Generated Variants</label>
+                            <div class="border border-gray-200 rounded-sm overflow-hidden">
+                                <table class="w-full text-left text-sm bg-white">
+                                    <thead class="bg-gray-50 text-xs text-gray-400 uppercase tracking-widest border-b border-gray-200">
+                                        <tr>
+                                            <th class="p-3 font-medium border-r border-gray-200">Variant</th>
+                                            <th class="p-3 font-medium border-r border-gray-200 w-28">Price ($)</th>
+                                            <th class="p-3 font-medium w-28">Stock</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="variants-body" class="divide-y divide-gray-100">
+                                        <!-- 動態 SKU 將渲染於此 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <label for="prod-image"
                             class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Product Image *</label>
@@ -157,6 +189,137 @@
 
     <!-- Application Logic -->
     <script>
+        // ====== 變體與規格狀態管理 ====== //
+        let productOptions = [];
+        let productVariants = [];
+
+        function initVariantBuilder() {
+            const addOptionBtn = document.getElementById('add-option-btn');
+            addOptionBtn.addEventListener('click', () => {
+                productOptions.push({ name: '', values: [] });
+                renderOptions();
+            });
+        }
+
+        // 渲染選項輸入框
+        function renderOptions() {
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            productOptions.forEach((opt, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'p-4 bg-gray-50 border border-gray-200 relative group';
+                
+                // 刪除選項按鈕
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'absolute top-3 right-3 text-xs text-red-400 hover:text-red-600 tracking-widest uppercase';
+                removeBtn.innerHTML = 'REMOVE';
+                removeBtn.onclick = () => {
+                    productOptions.splice(index, 1);
+                    renderOptions();
+                    generateVariants();
+                };
+
+                wrapper.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs tracking-widest text-gray-400 mb-1 uppercase">Option Name</label>
+                            <input type="text" placeholder="e.g. Color, Size" value="${opt.name}" 
+                                class="opt-name-input w-full border border-gray-300 p-2 text-sm focus:outline-none focus:border-aime-charcoal">
+                        </div>
+                        <div>
+                            <label class="block text-xs tracking-widest text-gray-400 mb-1 uppercase">Values (Comma Separated)</label>
+                            <input type="text" placeholder="e.g. Red, Blue, Matte Black" value="${opt.values.join(', ')}" 
+                                class="opt-val-input w-full border border-gray-300 p-2 text-sm focus:outline-none focus:border-aime-charcoal">
+                        </div>
+                    </div>
+                `;
+                
+                wrapper.appendChild(removeBtn);
+                container.appendChild(wrapper);
+
+                const nameInput = wrapper.querySelector('.opt-name-input');
+                const valInput = wrapper.querySelector('.opt-val-input');
+
+                nameInput.oninput = (e) => {
+                    productOptions[index].name = e.target.value.trim();
+                    generateVariants();
+                };
+
+                valInput.oninput = (e) => {
+                    productOptions[index].values = e.target.value.split(',').map(v => v.trim()).filter(v => v !== '');
+                    generateVariants();
+                };
+            });
+        }
+
+        // 計算笛卡兒積，生成 SKU 組合
+        function generateVariants() {
+            const validOptions = productOptions.filter(opt => opt.name && opt.values.length > 0);
+            const section = document.getElementById('variants-section');
+            
+            if (validOptions.length === 0) {
+                section.classList.add('hidden');
+                productVariants = [];
+                return;
+            }
+
+            section.classList.remove('hidden');
+
+            const valuesArrays = validOptions.map(opt => opt.values);
+            
+            let combinations = valuesArrays.reduce((acc, curr) => 
+                acc.flatMap(a => curr.map(c => [].concat(a, c)))
+            );
+
+            if (validOptions.length === 1) {
+                combinations = valuesArrays[0].map(v => [v]);
+            }
+
+            const oldVariantsDict = {};
+            productVariants.forEach(v => { oldVariantsDict[v.title] = v; });
+
+            productVariants = combinations.map(combo => {
+                const title = combo.join(' / ');
+                const old = oldVariantsDict[title];
+                return {
+                    title: title,
+                    price: old ? old.price : '', // 保留舊的輸入
+                    stock: old ? old.stock : ''
+                };
+            });
+
+            renderVariantsTable();
+        }
+
+        // 渲染 SKU 表格
+        function renderVariantsTable() {
+            const tbody = document.getElementById('variants-body');
+            tbody.innerHTML = '';
+            const basePrice = document.getElementById('prod-price').value;
+
+            productVariants.forEach((variant, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 border-r border-gray-200 text-sm font-medium text-aime-charcoal">${variant.title}</td>
+                    <td class="p-2 border-r border-gray-200">
+                        <input type="number" step="0.01" placeholder="${basePrice || '0.00'}" value="${variant.price}"
+                            class="var-price-input w-full border border-gray-300 p-1.5 text-sm focus:outline-none focus:border-aime-charcoal">
+                    </td>
+                    <td class="p-2">
+                        <input type="number" placeholder="Qty" value="${variant.stock}"
+                            class="var-stock-input w-full border border-gray-300 p-1.5 text-sm focus:outline-none focus:border-aime-charcoal">
+                    </td>
+                `;
+                
+                tr.querySelector('.var-price-input').oninput = (e) => productVariants[idx].price = e.target.value;
+                tr.querySelector('.var-stock-input').oninput = (e) => productVariants[idx].stock = e.target.value;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
         /**
          * Admin Dashboard Application
          * Enhanced with error handling, validation, and security features
@@ -573,12 +736,24 @@
                     formData.append('hardware_finishes', DOM.inputs.finishes.value.trim());
                     formData.append('image', DOM.inputs.image.files[0]);
 
+                    const validOptions = productOptions.filter(opt => opt.name && opt.values.length > 0);
+                    if (validOptions.length > 0) {
+                        formData.append('options', JSON.stringify(validOptions));
+                        formData.append('variants', JSON.stringify(productVariants));
+                    }
+
                     UI.setUploadState(true);
 
                     try {
                         await API.createProduct(formData);
                         UI.showToast('Product successfully added to catalog!');
                         DOM.form.reset();
+                        // Reset variants array and UI
+                        productOptions = [];
+                        productVariants = [];
+                        document.getElementById('options-container').innerHTML = '';
+                        document.getElementById('variants-section').classList.add('hidden');
+
                         document.getElementById('desc-count').textContent = '0';
                         await Handlers.initializeData();
                     } catch (err) {
@@ -611,6 +786,7 @@
                     DOM.confirmDelete.addEventListener('click', () => Handlers.onConfirmDelete());
 
                     // Initialize data
+                    initVariantBuilder();
                     Handlers.initializeData();
                 }
             };
