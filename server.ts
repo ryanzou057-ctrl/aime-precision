@@ -1,4 +1,5 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import mysql from "mysql2/promise"; // <--- 换成了 MySQL
@@ -41,13 +42,21 @@ const upload = multer({
 
 // ================= 数据库连接池配置 =================
 const pool = mysql.createPool({
+
     host: 'localhost',
-    user: 'root',
-    password: '',            // 空密码
-    database: 'my_website',  // 我们刚建的数据库
+
+    user: 'my_website',
+
+    password: 'b8dfNskrJd2E4tiZ',
+
+    database: 'my_website',
+
     waitForConnections: true,
+
     connectionLimit: 10,
+
     queueLimit: 0
+
 });
 
 // 测试数据库连接
@@ -158,24 +167,7 @@ async function startServer() {
         }
     });
 
-    // 创建商品接口
-    app.post("/api/products", upload.single("image"), async (req, res) => {
-        try {
-            const { name, price, description, hardware_finishes } = req.body;
-            const id = Date.now().toString();
-            const image_url = req.file ? "/uploads/" + req.file.filename : "";
 
-            await pool.query(
-                "INSERT INTO products (id, name, price, description, hardware_finishes, image_url) VALUES (?, ?, ?, ?, ?, ?)",
-                [id, name, price, description, hardware_finishes, image_url]
-            );
-
-            res.status(201).json({ success: true, id, image_url });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Failed to create product" });
-        }
-    });
 
     // 删除商品接口
     app.delete("/api/products/:id", async (req, res) => {
@@ -223,4 +215,3 @@ async function startServer() {
     });
 }
 startServer().catch(console.error);
-//测试
