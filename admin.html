@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIME | Admin Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+                    colors: { 'aime-black': '#1A1A1A', 'aime-green': '#2D4F36' }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 font-sans text-aime-black flex min-h-screen">
+
+    <aside class="w-64 bg-aime-black text-white flex flex-col hidden md:flex">
+        <div class="h-20 flex items-center justify-center border-b border-gray-800">
+            <h1 class="text-2xl font-bold tracking-widest">AIME <span
+                    class="text-xs text-gray-400 align-top">ADMIN</span></h1>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <button onclick="switchView('dashboard')" id="nav-dashboard"
+                class="w-full text-left block px-4 py-3 bg-white/10 rounded text-sm tracking-wider transition">Dashboard
+                Overview</button>
+            <button onclick="switchView('products')" id="nav-products"
+                class="w-full text-left block px-4 py-3 hover:bg-white/10 rounded text-sm tracking-wider text-gray-400 transition">Products
+                Control</button>
+        </nav>
+        <div class="p-4 border-t border-gray-800">
+            <button onclick="window.location.href='/'"
+                class="w-full py-2 text-sm text-gray-400 hover:text-white transition">← Back to Storefront</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto relative">
+
+        <div id="view-dashboard" class="block">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold mb-1">Overview</h2>
+                <p class="text-sm text-gray-500">Welcome to your dashboard</p>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 border-t-4 border-t-aime-black">
+                    <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-2">Total Users</h3>
+                    <p class="text-4xl font-bold" id="stat-users">Loading...</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 border-t-4 border-t-aime-green">
+                    <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-2">Total Products</h3>
+                    <p class="text-4xl font-bold" id="stat-products">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-products" class="hidden">
+            <header class="mb-8 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-bold mb-1">Products Control</h2>
+                    <p class="text-sm text-gray-500">Manage your inventory and catalog</p>
+                </div>
+                <button onclick="toggleModal(true)"
+                    class="bg-aime-black text-white px-6 py-3 text-sm font-bold tracking-widest uppercase hover:bg-aime-green transition shadow-lg">
+                    + Add Product
+                </button>
+            </header>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4 font-medium w-24">Image</th>
+                                <th class="px-6 py-4 font-medium">Name</th>
+                                <th class="px-6 py-4 font-medium">Price</th>
+                                <th class="px-6 py-4 font-medium text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="4" class="px-6 py-8 text-center text-gray-400">Loading products...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="product-modal"
+        class="fixed inset-0 bg-black/50 hidden z-50 flex justify-center items-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-2xl rounded-lg shadow-2xl p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Create New Product</h2>
+                <button onclick="toggleModal(false)" class="text-gray-400 hover:text-black text-2xl">&times;</button>
+            </div>
+            <form id="add-product-form" onsubmit="submitProduct(event)" class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Product
+                            Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" required
+                            class="w-full border border-gray-200 p-3 rounded focus:outline-none focus:border-aime-green transition-colors text-sm placeholder-gray-300"
+                            placeholder="e.g. AIME Classic Lounge Chair">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Price
+                            (USD) <span class="text-red-500">*</span></label>
+                        <input type="text" name="price" required
+                            class="w-full border border-gray-200 p-3 rounded focus:outline-none focus:border-aime-green transition-colors text-sm placeholder-gray-300"
+                            placeholder="e.g. 1299.00">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Dimensions
+                            (W x D x H)</label>
+                        <input type="text" name="dimensions"
+                            class="w-full border border-gray-200 p-3 rounded focus:outline-none focus:border-aime-green transition-colors text-sm placeholder-gray-300"
+                            placeholder="e.g. 80cm x 85cm x 90cm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Primary
+                            Material</label>
+                        <input type="text" name="material"
+                            class="w-full border border-gray-200 p-3 rounded focus:outline-none focus:border-aime-green transition-colors text-sm placeholder-gray-300"
+                            placeholder="e.g. Top-grain Leather, Solid Walnut">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Hardware
+                        Finishes</label>
+                    <input type="text" name="hardware_finishes"
+                        class="w-full border border-gray-200 p-3 rounded focus:outline-none focus:border-aime-green transition-colors text-sm placeholder-gray-300"
+                        placeholder="e.g. Brushed Brass, Matte Black (Comma separated)">
+                </div>
+
+                <div
+                    class="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center hover:border-aime-green transition-colors bg-gray-50/50">
+                    <label class="block text-xs uppercase tracking-widest text-gray-800 font-bold mb-3">Product Image
+                        <span class="text-red-500">*</span></label>
+                    <input type="file" name="image" accept="image/*"
+                        class="mx-auto block w-full max-w-xs text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-white file:text-aime-green file:border file:border-gray-200 hover:file:bg-gray-50 cursor-pointer">
+
+                    <div class="mt-4 text-[10px] text-gray-400 uppercase tracking-widest leading-loose">
+                        <p>Image Standard: <span class="text-gray-600 font-semibold">1200 x 1200px (1:1 Ratio)</span>
+                        </p>
+                        <p>Format: <span class="text-gray-600 font-semibold">JPG, PNG, WEBP</span> | Max Size: <span
+                                class="text-gray-600 font-semibold">5MB</span></p>
+                        <p>Background: <span class="text-gray-600 font-semibold">Solid White (#FFFFFF)
+                                Recommended</span></p>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-4 border-t border-gray-100">
+                    <button type="button" onclick="toggleModal(false)"
+                        class="px-6 py-3 text-xs font-bold tracking-widest text-gray-500 hover:text-black uppercase transition-colors">Cancel</button>
+                    <button type="submit" id="submit-btn"
+                        class="bg-aime-black text-white px-8 py-3 text-xs font-bold tracking-widest uppercase hover:bg-aime-green transition-colors shadow-lg">Save
+                        Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- 视图切换逻辑 (SPA 核心) ---
+        function switchView(viewName) {
+            // 隐藏所有视图
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-products').classList.add('hidden');
+            // 显示目标视图
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+            // 更改侧边栏高亮状态
+            document.getElementById('nav-dashboard').className = "w-full text-left block px-4 py-3 rounded text-sm tracking-wider transition " + (viewName === 'dashboard' ? "bg-white/10 text-white" : "hover:bg-white/10 text-gray-400");
+            document.getElementById('nav-products').className = "w-full text-left block px-4 py-3 rounded text-sm tracking-wider transition " + (viewName === 'products' ? "bg-white/10 text-white" : "hover:bg-white/10 text-gray-400");
+
+            // 切换时重新拉取数据
+            if (viewName === 'dashboard') loadDashboardStats();
+            if (viewName === 'products') fetchProducts();
+        }
+
+        // --- 加载仪表盘数据 ---
+        async function loadDashboardStats() {
+            try {
+                const [usersRes, productsRes] = await Promise.all([fetch('/api/admin/users'), fetch('/api/products')]);
+                if (!usersRes.ok || !productsRes.ok) throw new Error("API Error");
+                const users = await usersRes.json();
+                const products = await productsRes.json();
+                document.getElementById('stat-users').innerText = users.length || 0;
+                document.getElementById('stat-products').innerText = products.length || 0;
+            } catch (err) {
+                document.getElementById('stat-users').innerText = "Error";
+                document.getElementById('stat-products').innerText = "Error";
+            }
+        }
+
+        // --- 加载商品列表 ---
+        async function fetchProducts() {
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-400">Loading products...</td></tr>';
+
+            try {
+                const res = await fetch('/api/products');
+                if (!res.ok) throw new Error(`Server returned ${res.status}`);
+                const products = await res.json();
+
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-400">Inventory is empty. Add a product to get started.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = products.map(p => `
+                    <tr class="hover:bg-gray-50 border-t">
+                        <td class="px-6 py-4"><img src="${p.image_url || ''}" class="w-10 h-10 object-cover rounded bg-gray-100"></td>
+                        <td class="px-6 py-4 font-bold">${p.name}</td>
+                        <td class="px-6 py-4">$${p.price}</td>
+                        <td class="px-6 py-4 text-right"><button onclick="deleteProduct('${p.id}')" class="text-red-500 text-xs uppercase font-bold">Delete</button></td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                // 明确显示报错信息在表格里
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-red-500 font-bold">Failed to load: Database table might be missing. Check terminal for errors.</td></tr>`;
+            }
+        }
+
+        // --- 提交/删除功能 (保持不变) ---
+        async function submitProduct(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Saving..."; btn.disabled = true;
+            try {
+                const res = await fetch('/api/products', { method: 'POST', body: new FormData(e.target) });
+                if (res.ok) { toggleModal(false); e.target.reset(); fetchProducts(); }
+                else alert('Failed to save.');
+            } catch (err) { alert('Network error.'); }
+            finally { btn.innerText = "Save Product"; btn.disabled = false; }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                if (res.ok) fetchProducts();
+            }
+        }
+
+        function toggleModal(show) { document.getElementById('product-modal').classList[show ? 'remove' : 'add']('hidden'); }
+
+        // 默认初始化显示 Dashboard
+        switchView('dashboard');
+    </script>
+</body>
+
+</html>

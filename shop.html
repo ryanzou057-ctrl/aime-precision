@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Craft | AIME PRECISION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'aime-beige': '#E5E5E1', // Light Warm Grey
+                        'aime-black': '#1A1A1A', // Charcoal Black
+                        'aime-dark-grey': '#333333',
+                        'aime-grey': '#666666',
+                        'aime-green': '#2D4F36', // Forest Green
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [data-lang-cn] {
+            display: none;
+        }
+
+        html.lang-cn [data-lang-en] {
+            display: none;
+        }
+
+        html.lang-cn [data-lang-cn] {
+            display: block;
+        }
+
+        .border-fine {
+            border: 1px solid rgba(26, 26, 26, 0.1);
+        }
+
+        @keyframes breathing {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(45, 79, 54, 0.2);
+                border-color: rgba(45, 79, 54, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(45, 79, 54, 0.6);
+                border-color: rgba(45, 79, 54, 1);
+            }
+        }
+
+        .btn-breathing:hover {
+            animation: breathing 2s ease-in-out infinite;
+        }
+
+        .active-breathing {
+            animation: breathing 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-aime-beige text-aime-black font-sans selection:bg-aime-green selection:text-white">
+
+    <!-- Header -->
+    <nav id="header" class="fixed top-0 w-full z-50 bg-aime-black/90 backdrop-blur-md py-4 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-white">
+            <div class="flex items-center gap-12">
+                <a href="index.html" class="text-3xl font-display font-bold tracking-tighter">AIME</a>
+                <div class="hidden md:flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em]">
+                    <a href="index.html" class="hover:text-aime-green transition-colors">
+                        <span data-lang-en>Collection</span><span data-lang-cn>系列</span>
+                    </a>
+                    <a href="shop.html" class="text-aime-green transition-colors">
+                        <span data-lang-en>Shop Craft</span><span data-lang-cn>产品中心</span>
+                    </a>
+                    <a href="diy.html" class="hover:text-aime-green transition-colors">
+                        <span data-lang-en>DIY Custom</span><span data-lang-cn>定制页面</span>
+                    </a>
+                    <a href="contact.html" class="hover:text-aime-green transition-colors">
+                        <span data-lang-en>Contact</span><span data-lang-cn>联系我们</span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 text-[10px] font-bold tracking-widest">
+                    <button onclick="setLanguage('cn')" class="hover:text-aime-green transition-colors">CN</button>
+                    <span class="opacity-20">|</span>
+                    <button onclick="setLanguage('en')" class="hover:text-aime-green transition-colors">EN</button>
+                </div>
+                <button class="p-2 hover:text-aime-green transition-colors"><i data-lucide="shopping-bag"
+                        class="w-5 h-5"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-aime-green font-bold text-[10px] uppercase tracking-[0.3em] mb-4">Catalog v2.0</p>
+            <h1 class="text-7xl font-display font-bold mb-8 tracking-tighter uppercase">
+                <span data-lang-en>Shop Craft</span><span data-lang-cn>匠心优选</span>
+            </h1>
+            <div class="flex gap-12 border-b border-black/10 pb-8" id="category-nav">
+                <button data-category="all"
+                    class="category-btn text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-aime-green relative pb-2">
+                    <span data-lang-en>All Series</span><span data-lang-cn>全系列</span>
+                    <div
+                        class="underline-indicator absolute bottom-0 left-0 w-full h-[2px] bg-aime-green animate-breathing-underline">
+                    </div>
+                </button>
+                <button data-category="minimalist"
+                    class="category-btn text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-[#666666] hover:text-[#1A1A1A] transition-colors duration-[400ms] relative pb-2">
+                    <span data-lang-en>Minimalist Frame</span><span data-lang-cn>极简框</span>
+                    <div class="underline-indicator absolute bottom-0 left-0 w-full h-[2px] bg-aime-green hidden"></div>
+                </button>
+                <button data-category="frameless"
+                    class="category-btn text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-[#666666] hover:text-[#1A1A1A] transition-colors duration-[400ms] relative pb-2">
+                    <span data-lang-en>Frameless Series</span><span data-lang-cn>无框系列</span>
+                    <div class="underline-indicator absolute bottom-0 left-0 w-full h-[2px] bg-aime-green hidden"></div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Asymmetric Grid -->
+    <section class="pb-32 relative">
+        <!-- Loading Spinner -->
+        <div id="loading-spinner"
+            class="hidden absolute top-0 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-sm border border-[#2D4F36] active-breathing">
+            <div class="w-4 h-4 border-2 border-gray-300 border-t-[#2D4F36] rounded-full animate-spin"></div>
+            <span class="text-[10px] font-bold text-gray-600 tracking-widest uppercase">Syncing...</span>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message"
+            class="hidden absolute top-0 left-1/2 -translate-x-1/2 z-50 bg-white/80 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-red-100">
+            <p class="font-display text-gray-400 italic text-sm">Connection to Precision Engine lost. Retrying...</p>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 items-end gap-12" id="product-grid">
+                <!-- Products will be dynamically injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Detail Modal -->
+    <div id="modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-aime-black/95 backdrop-blur-xl" onclick="closeModal()"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl bg-aime-beige p-12 lg:p-20 grid grid-cols-1 md:grid-cols-2 gap-16 border border-white/10">
+            <button onclick="closeModal()" class="absolute top-8 right-8 text-aime-black/40 hover:text-aime-black"><i
+                    data-lucide="x" class="w-10 h-10"></i></button>
+            <div class="aspect-square bg-aime-cement overflow-hidden p-12 flex items-center justify-center">
+                <img id="modal-img" src="" alt="Detail" class="w-full h-full object-contain">
+            </div>
+            <div class="flex flex-col justify-center">
+                <p id="modal-cat" class="text-aime-green font-bold text-[10px] uppercase tracking-[0.4em] mb-6">Category
+                </p>
+                <h2 id="modal-title" class="text-6xl font-display font-bold mb-8 tracking-tighter uppercase">Product
+                    Name</h2>
+                <p class="text-aime-grey font-light leading-relaxed mb-12 text-lg">Precision engineered with 10mm safety
+                    glass and industrial-grade stainless steel hardware. Designed for longevity and minimalist appeal.
+                </p>
+                <div class="flex gap-6">
+                    <button
+                        class="flex-1 bg-aime-black text-white py-6 text-[10px] font-bold tracking-widest uppercase hover:bg-aime-green transition-all">Add
+                        to List</button>
+                    <button
+                        class="flex-1 border border-aime-black py-6 text-[10px] font-bold tracking-widest uppercase hover:bg-aime-black hover:text-white transition-all">Inquire</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-aime-black text-white pt-32 pb-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="pt-12 border-t border-white/5 flex justify-between items-center">
+                <p class="text-[10px] tracking-[0.3em] text-white/10 uppercase">© 2026 AIME PRECISION. All Rights
+                    Reserved.</p>
+                <div class="flex gap-8 text-[10px] tracking-[0.2em] text-white/20">
+                    <a href="#" class="hover:text-white transition-colors uppercase">Privacy</a>
+                    <a href="#" class="hover:text-white transition-colors uppercase">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function setLanguage(lang) {
+            document.documentElement.className = 'lang-' + lang;
+            localStorage.setItem('aime-lang', lang);
+        }
+        const savedLang = localStorage.getItem('aime-lang') || 'en';
+        setLanguage(savedLang);
+
+        function openModal(name, img) {
+            document.getElementById('modal-title').innerText = name;
+            document.getElementById('modal-img').src = img;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        // Image Fallback Logic
+        window.addEventListener('error', function (e) {
+            if (e.target.tagName === 'IMG') {
+                const keywords = ['concrete', 'grey-marble', 'architectural-glass', 'minimalist-interior'];
+                const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];
+                e.target.src = `https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1200&q=${randomKeyword}`;
+                e.target.onerror = null; // Prevent infinite loops
+            }
+        }, true);
+
+        // Category Navigation and Product Rendering Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const productGrid = document.getElementById('product-grid');
+
+            // --- 1. Supabase Backend Service ---
+            // 🛠️ REPLACE THESE WITH YOUR SUPABASE PROJECT URL AND ANON KEY
+            const SUPABASE_URL = 'https://dxvgpfuwamerzfsmbjoy.supabase.co';
+            const SUPABASE_ANON_KEY = '####';
+
+            let supabase;
+            if (SUPABASE_URL) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+
+            const DataEngine = {
+                init: () => {
+                    if (!supabase) {
+                        console.warn("Supabase is not configured. Please set SUPABASE_URL and SUPABASE_ANON_KEY.");
+                    }
+                },
+                getProducts: async () => {
+                    if (!supabase) return [];
+                    const { data, error } = await supabase.from('products').select('*').order('id', { ascending: false });
+                    if (error) {
+                        console.error('Error fetching products:', error);
+                        alert('Supabase Error: ' + error.message + '\nCheck your API keys and table permissions.');
+                        return [];
+                    }
+                    return data || [];
+                }
+            };
+
+            DataEngine.init();
+
+            function showLoading() { document.getElementById('loading-spinner').classList.remove('hidden'); }
+            function hideLoading() { document.getElementById('loading-spinner').classList.add('hidden'); }
+            function showError() { document.getElementById('error-message').classList.remove('hidden'); }
+            function hideError() { document.getElementById('error-message').classList.add('hidden'); }
+
+            let products = [];
+
+            async function fetchProducts() {
+                showLoading();
+                hideError();
+                try {
+                    products = await DataEngine.getProducts();
+                    renderProducts();
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    showError();
+                } finally {
+                    hideLoading();
+                }
+            }
+
+            // Render products
+            function renderProducts() {
+                productGrid.innerHTML = '';
+                if (!supabase) {
+                    productGrid.innerHTML = `<div class="col-span-12 text-center py-20 text-red-500 font-bold">Supabase not configured. Please add your keys in the code.</div>`;
+                    return;
+                }
+                if (products.length === 0) {
+                    productGrid.innerHTML = `<div class="col-span-12 text-center py-20 text-gray-400 italic">No products available. Add some from the admin panel.</div>`;
+                    return;
+                }
+                products.forEach((product, index) => {
+                    // Alternate sizes for the asymmetric grid
+                    const isLarge = index % 2 === 0;
+                    const colSpan = isLarge ? 'lg:col-span-8' : 'lg:col-span-4';
+                    const aspect = isLarge ? 'aspect-[16/9]' : 'aspect-[4/5]';
+                    const cat = product.category || product.cat;
+                    const categoryDisplay = cat === 'minimalist' || cat === 'Minimalist Frame' ? 'Minimalist Frame' : 'Frameless Series';
+                    const dataCat = categoryDisplay === 'Minimalist Frame' ? 'minimalist' : 'frameless';
+                    const imgUrl = product.image || product.url;
+
+                    const html = `
+                        <div class="${colSpan} group cursor-pointer product-item" data-category="${dataCat}" onclick="window.location.href='diy.html'">
+                            <div class="relative ${aspect} overflow-hidden mb-0 bg-[#D1D1D1]">
+                                <img src="${imgUrl}" alt="${product.name}" class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-aime-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            </div>
+                            <div class="bg-aime-beige pt-8 flex flex-col">
+                                <div class="flex justify-between items-start mb-6">
+                                    <div>
+                                        <p class="text-aime-green font-light text-[10px] uppercase tracking-[0.3em] mb-2">${categoryDisplay}</p>
+                                        <h3 class="text-3xl font-display font-bold text-aime-black tracking-tight group-hover:text-aime-green transition-colors uppercase">${product.name}</h3>
+                                    </div>
+                                    <p class="font-display text-2xl text-aime-black/80">$${product.price.toString().replace('$', '')}</p>
+                                </div>
+                                <button class="w-full bg-aime-black text-white rounded-full py-5 text-[10px] font-bold tracking-[0.2em] uppercase transition-all duration-300 btn-breathing flex items-center justify-center gap-2">
+                                    VIEW DETAILS <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    productGrid.insertAdjacentHTML('beforeend', html);
+                });
+                lucide.createIcons();
+
+                // Apply current filter
+                const activeBtn = document.querySelector('.category-btn.text-aime-green');
+                if (activeBtn) {
+                    const selectedCategory = activeBtn.getAttribute('data-category');
+                    const productItems = document.querySelectorAll('.product-item');
+                    productItems.forEach(item => {
+                        if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                            item.style.display = 'block';
+                            item.style.opacity = '1';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                }
+            }
+
+            fetchProducts();
+
+            const categoryBtns = document.querySelectorAll('.category-btn');
+
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active state from all buttons
+                    categoryBtns.forEach(b => {
+                        b.classList.remove('text-aime-green');
+                        b.classList.add('text-[#666666]');
+                        const indicator = b.querySelector('.underline-indicator');
+                        if (indicator) {
+                            indicator.classList.add('hidden');
+                            indicator.classList.remove('animate-breathing-underline');
+                        }
+                    });
+
+                    // Add active state to clicked button
+                    btn.classList.remove('text-[#666666]');
+                    btn.classList.add('text-aime-green');
+                    const indicator = btn.querySelector('.underline-indicator');
+                    if (indicator) {
+                        indicator.classList.remove('hidden');
+                        indicator.classList.add('animate-breathing-underline');
+                    }
+
+                    // Filter products
+                    const productItems = document.querySelectorAll('.product-item');
+                    const selectedCategory = btn.getAttribute('data-category');
+                    productItems.forEach(item => {
+                        if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                            item.style.display = 'block';
+                            // Add a small fade-in effect
+                            item.style.opacity = '0';
+                            setTimeout(() => {
+                                item.style.transition = 'opacity 0.5s ease';
+                                item.style.opacity = '1';
+                            }, 50);
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

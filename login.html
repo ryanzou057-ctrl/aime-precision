@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIME | Member Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    },
+                    colors: {
+                        'aime-beige': '#E5E5E1',
+                        'aime-black': '#1A1A1A',
+                        'aime-green': '#2D4F36',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-aime-beige font-sans text-aime-black min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full bg-white p-10 shadow-2xl">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-serif font-bold tracking-widest mb-2">AIME</h1>
+            <p id="form-title" class="text-[10px] uppercase tracking-[0.4em] text-gray-400">Member Access</p>
+        </div>
+        <form id="login-form" class="space-y-6">
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
+                <input type="email" id="login-email" required class="w-full border-b border-gray-200 py-3 focus:outline-none focus:border-aime-green transition-colors text-sm">
+            </div>
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Password</label>
+                <input type="password" id="login-password" required class="w-full border-b border-gray-200 py-3 focus:outline-none focus:border-aime-green transition-colors text-sm">
+            </div>
+            <button type="submit" class="w-full bg-aime-black text-white py-4 text-[10px] font-bold tracking-[0.3em] uppercase hover:bg-aime-green transition-all">Login</button>
+            <p class="text-center text-xs text-gray-400">New to AIME? <button type="button" onclick="toggleForm('register')" class="text-aime-green font-bold">Create Account</button></p>
+        </form>
+        <form id="register-form" class="space-y-6 hidden">
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Full Name</label>
+                <input type="text" id="reg-name" required class="w-full border-b border-gray-200 py-3 focus:outline-none focus:border-aime-green transition-colors text-sm">
+            </div>
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
+                <input type="email" id="reg-email" required class="w-full border-b border-gray-200 py-3 focus:outline-none focus:border-aime-green transition-colors text-sm">
+            </div>
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Password</label>
+                <input type="password" id="reg-password" required class="w-full border-b border-gray-200 py-3 focus:outline-none focus:border-aime-green transition-colors text-sm">
+            </div>
+            <button type="submit" class="w-full bg-aime-black text-white py-4 text-[10px] font-bold tracking-[0.3em] uppercase hover:bg-aime-green transition-all">Register</button>
+            <p class="text-center text-xs text-gray-400">Already a member? <button type="button" onclick="toggleForm('login')" class="text-aime-green font-bold">Login</button></p>
+        </form>
+        <div id="message" class="mt-6 text-center text-xs hidden"></div>
+    </div>
+    <script>
+        function toggleForm(type) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const title = document.getElementById('form-title');
+            if (type === 'register') {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                title.textContent = 'Create Account';
+            } else {
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                title.textContent = 'Member Access';
+            }
+        }
+        function showMessage(text, isError = false) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'mt-6 text-center text-xs ' + (isError ? 'text-red-500' : 'text-aime-green');
+            msg.classList.remove('hidden');
+        }
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('aime_user', JSON.stringify(data.user));
+                    showMessage('Login successful! Redirecting...');
+                    setTimeout(() => window.location.href = 'index.html', 1500);
+                } else showMessage(data.error, true);
+            } catch (err) { showMessage('Network error, please try again.', true); }
+        });
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showMessage('Registration successful! Please login.');
+                    setTimeout(() => toggleForm('login'), 1500);
+                } else showMessage(data.error, true);
+            } catch (err) { showMessage('Network error, please try again.', true); }
+        });
+    </script>
+</body>
+</html>

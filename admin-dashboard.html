@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AIME Admin Dashboard - Manage your shower enclosure products">
+    <meta name="csrf-token" content="">
+    <title>AIME | Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    },
+                    colors: {
+                        'aime-charcoal': '#2C2C2C',
+                        'aime-gold': '#D4AF37'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="font-sans text-aime-charcoal bg-gray-50 antialiased p-8 md:p-12 min-h-screen relative">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="flex justify-between items-center mb-12 border-b border-gray-200 pb-6">
+            <h1 class="text-4xl font-serif font-semibold tracking-widest">
+                AIME <span class="text-gray-400 font-light text-2xl">| ADMIN</span>
+            </h1>
+            <a href="index.html"
+                class="text-sm tracking-widest hover:text-aime-gold transition-colors duration-300">BACK TO STORE</a>
+        </header>
+
+        <!-- Main Content Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+            <!-- Left Column: Add Product Form -->
+            <div
+                class="col-span-1 bg-white p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <h2 class="text-xl font-serif mb-6 border-b pb-4">Add New Product</h2>
+                <form id="add-product-form" class="space-y-5" novalidate>
+                    <div>
+                        <label for="prod-name"
+                            class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Product Name *</label>
+                        <input type="text" id="prod-name" required maxlength="255"
+                            class="w-full border border-gray-300 p-3 text-sm focus:outline-none focus:ring-1 focus:ring-aime-charcoal focus:border-aime-charcoal transition-all"
+                            placeholder="e.g., Onyx Minimalist">
+                        <span class="text-xs text-gray-400 mt-1 block" id="name-error"></span>
+                    </div>
+                    <div>
+                        <label for="prod-price" class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Base
+                            Price ($) *</label>
+                        <input type="number" id="prod-price" required min="0" step="0.01"
+                            class="w-full border border-gray-300 p-3 text-sm focus:outline-none focus:ring-1 focus:ring-aime-charcoal focus:border-aime-charcoal transition-all"
+                            placeholder="1200">
+                        <span class="text-xs text-gray-400 mt-1 block" id="price-error"></span>
+                    </div>
+                    <div>
+                        <label for="prod-desc"
+                            class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Description</label>
+                        <textarea id="prod-desc" rows="3" maxlength="2000"
+                            class="w-full border border-gray-300 p-3 text-sm focus:outline-none focus:ring-1 focus:ring-aime-charcoal focus:border-aime-charcoal transition-all"
+                            placeholder="Product description..."></textarea>
+                        <span class="text-xs text-gray-400 mt-1 block"><span id="desc-count">0</span>/2000</span>
+                    </div>
+                    <div>
+                        <label for="prod-finishes"
+                            class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Hardware Finishes
+                            (JSON)</label>
+                        <textarea id="prod-finishes" rows="3" placeholder='["Matte Black", "Brushed Brass"]'
+                            class="w-full border border-gray-300 p-3 text-sm focus:outline-none focus:ring-1 focus:ring-aime-charcoal focus:border-aime-charcoal transition-all font-mono"></textarea>
+                        <span class="text-xs text-gray-400 mt-1 block" id="finishes-error"></span>
+                    </div>
+                    <div>
+                        <label for="prod-image"
+                            class="block text-xs tracking-widest text-gray-400 mb-2 uppercase">Product Image *</label>
+                        <input type="file" id="prod-image" accept="image/jpeg,image/png,image/webp,image/gif" required
+                            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-aime-charcoal hover:file:bg-gray-200 file:transition-colors file:cursor-pointer cursor-pointer">
+                        <span class="text-xs text-gray-400 mt-1 block" id="image-error"></span>
+                    </div>
+                    <button type="submit" id="upload-btn"
+                        class="w-full bg-aime-charcoal text-white py-4 text-xs tracking-widest hover:bg-black transition-colors duration-300 mt-4 flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="btn-text">UPLOAD PRODUCT</span>
+                        <svg id="btn-spinner" class="hidden animate-spin ml-3 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Product List -->
+            <div
+                class="col-span-1 lg:col-span-2 bg-white p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-xl font-serif">Manage Products</h2>
+                    <button id="refresh-btn" class="text-xs text-gray-500 hover:text-aime-charcoal transition-colors"
+                        title="Refresh product list">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="text-xs text-gray-400 uppercase tracking-widest border-b border-gray-200">
+                            <tr>
+                                <th class="pb-3 font-medium">Image</th>
+                                <th class="pb-3 font-medium">Name</th>
+                                <th class="pb-3 font-medium">Price</th>
+                                <th class="pb-3 font-medium text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-list-body" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-gray-400">Loading products...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded shadow-lg max-w-sm">
+            <h3 class="text-lg font-serif mb-4">Confirm Delete</h3>
+            <p class="text-gray-600 mb-6">Are you certain you want to permanently delete this product?</p>
+            <div class="flex gap-4 justify-end">
+                <button id="confirm-cancel"
+                    class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded transition-colors">Cancel</button>
+                <button id="confirm-delete"
+                    class="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded transition-colors">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * Admin Dashboard Application
+         * Enhanced with error handling, validation, and security features
+         */
+        const AdminApp = (() => {
+            // Configuration
+            const CONFIG = {
+                API_TIMEOUT: 30000, // 30 seconds
+                MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
+                ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+                MAX_IMAGE_SIZE: 5 * 1024 * 1024, // 5MB
+                MAX_NAME_LENGTH: 255,
+                MAX_DESC_LENGTH: 2000
+            };
+
+            // 1. DOM Elements Cache
+            const DOM = {
+                form: document.getElementById('add-product-form'),
+                uploadBtn: document.getElementById('upload-btn'),
+                btnText: document.getElementById('btn-text'),
+                btnSpinner: document.getElementById('btn-spinner'),
+                listBody: document.getElementById('product-list-body'),
+                toastContainer: document.getElementById('toast-container'),
+                refreshBtn: document.getElementById('refresh-btn'),
+                confirmModal: document.getElementById('confirm-modal'),
+                confirmCancel: document.getElementById('confirm-cancel'),
+                confirmDelete: document.getElementById('confirm-delete'),
+                inputs: {
+                    name: document.getElementById('prod-name'),
+                    price: document.getElementById('prod-price'),
+                    desc: document.getElementById('prod-desc'),
+                    finishes: document.getElementById('prod-finishes'),
+                    image: document.getElementById('prod-image')
+                },
+                errors: {
+                    name: document.getElementById('name-error'),
+                    price: document.getElementById('price-error'),
+                    desc: document.getElementById('desc-error'),
+                    finishes: document.getElementById('finishes-error'),
+                    image: document.getElementById('image-error')
+                }
+            };
+
+            // State management
+            let state = {
+                isLoading: false,
+                pendingDeleteId: null
+            };
+
+            // 2. API Service Module with timeout and error handling
+            const BASE_API_URL = '';
+
+            const API = {
+                async fetchWithTimeout(url, options = {}, timeout = CONFIG.API_TIMEOUT) {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                    try {
+                        const response = await fetch(url, {
+                            ...options,
+                            signal: controller.signal
+                        });
+                        clearTimeout(timeoutId);
+                        return response;
+                    } catch (error) {
+                        clearTimeout(timeoutId);
+                        if (error.name === 'AbortError') {
+                            throw new Error('Request timeout - please try again');
+                        }
+                        throw error;
+                    }
+                },
+
+                async fetchProducts() {
+                    try {
+                        const res = await this.fetchWithTimeout(`${BASE_API_URL}/api/products`);
+                        if (!res.ok) {
+                            const err = await res.json().catch(() => ({}));
+                            throw new Error(err.error || `HTTP ${res.status}: Failed to fetch products`);
+                        }
+                        return res.json();
+                    } catch (error) {
+                        throw new Error(error.message || 'Failed to fetch products');
+                    }
+                },
+
+                async deleteProduct(id) {
+                    try {
+                        const res = await this.fetchWithTimeout(`${BASE_API_URL}/api/products/${id}`, {
+                            method: 'DELETE'
+                        });
+                        if (!res.ok) {
+                            const err = await res.json().catch(() => ({}));
+                            throw new Error(err.error || `HTTP ${res.status}: Failed to delete product`);
+                        }
+                        return res.json();
+                    } catch (error) {
+                        throw new Error(error.message || 'Failed to delete product');
+                    }
+                },
+
+                async createProduct(formData) {
+                    try {
+                        const res = await this.fetchWithTimeout(`${BASE_API_URL}/api/products`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!res.ok) {
+                            const err = await res.json().catch(() => ({}));
+                            throw new Error(err.error || `HTTP ${res.status}: Failed to create product`);
+                        }
+                        return res.json();
+                    } catch (error) {
+                        throw new Error(error.message || 'Failed to create product');
+                    }
+                }
+            };
+
+            // 3. Validation Module
+            const Validation = {
+                validateName(name) {
+                    if (!name || typeof name !== 'string') {
+                        return 'Product name is required';
+                    }
+                    if (name.trim().length === 0) {
+                        return 'Product name cannot be empty';
+                    }
+                    if (name.length > CONFIG.MAX_NAME_LENGTH) {
+                        return `Product name must not exceed ${CONFIG.MAX_NAME_LENGTH} characters`;
+                    }
+                    return null;
+                },
+
+                validatePrice(price) {
+                    const num = parseFloat(price);
+                    if (isNaN(num)) {
+                        return 'Price must be a valid number';
+                    }
+                    if (num < 0) {
+                        return 'Price must be a positive number';
+                    }
+                    return null;
+                },
+
+                validateDescription(desc) {
+                    if (desc && desc.length > CONFIG.MAX_DESC_LENGTH) {
+                        return `Description must not exceed ${CONFIG.MAX_DESC_LENGTH} characters`;
+                    }
+                    return null;
+                },
+
+                validateFinishes(finishes) {
+                    if (!finishes || finishes.trim() === '') {
+                        return null;
+                    }
+                    try {
+                        const parsed = JSON.parse(finishes);
+                        if (!Array.isArray(parsed)) {
+                            return 'Hardware finishes must be a JSON array';
+                        }
+                        if (parsed.some(item => typeof item !== 'string')) {
+                            return 'All elements in Hardware Finishes array must be strings';
+                        }
+                        return null;
+                    } catch (err) {
+                        return 'Hardware finishes must be valid JSON';
+                    }
+                },
+
+                validateImage(file) {
+                    if (!file) {
+                        return 'Please select a product image';
+                    }
+                    if (!CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                        return 'Only JPEG, PNG, GIF, WEBP images are allowed';
+                    }
+                    if (file.size > CONFIG.MAX_IMAGE_SIZE) {
+                        return `Image size must be less than ${CONFIG.MAX_IMAGE_SIZE / 1024 / 1024}MB`;
+                    }
+                    return null;
+                },
+
+                clearErrors() {
+                    Object.values(DOM.errors).forEach(el => {
+                        if (el) el.textContent = '';
+                    });
+                },
+
+                displayError(field, message) {
+                    if (DOM.errors[field]) {
+                        DOM.errors[field].textContent = message;
+                    }
+                }
+            };
+
+            // 4. UI/View Service Module
+            const UI = {
+                showLoading() {
+                    DOM.listBody.innerHTML = '';
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.setAttribute('colspan', '4');
+                    td.className = 'py-12 text-center text-gray-400';
+                    td.innerHTML = `
+                        <div class="flex flex-col items-center justify-center">
+                            <svg class="animate-spin h-6 w-6 mb-3 text-aime-charcoal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Retrieving catalog...</span>
+                        </div>
+                    `;
+                    tr.appendChild(td);
+                    DOM.listBody.appendChild(tr);
+                },
+
+                showError(message) {
+                    DOM.listBody.innerHTML = '';
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.setAttribute('colspan', '4');
+                    td.className = 'py-8 text-center text-red-500';
+                    td.textContent = message;
+                    tr.appendChild(td);
+                    DOM.listBody.appendChild(tr);
+                },
+
+                showEmpty() {
+                    DOM.listBody.innerHTML = '';
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.setAttribute('colspan', '4');
+                    td.className = 'py-12 text-center text-gray-400 tracking-widest text-xs uppercase';
+                    td.textContent = 'No products found. Start by adding one.';
+                    tr.appendChild(td);
+                    DOM.listBody.appendChild(tr);
+                },
+
+                renderProducts(products) {
+                    DOM.listBody.innerHTML = '';
+                    if (!products || products.length === 0) {
+                        return this.showEmpty();
+                    }
+
+                    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+                    const fragment = document.createDocumentFragment();
+
+                    products.forEach(p => {
+                        const imgSrc = p.image_url || p.image || 'https://via.placeholder.com/150';
+                        const formattedPrice = formatter.format(p.price);
+
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-gray-50 transition-colors duration-200 group';
+
+                        const tdImg = document.createElement('td');
+                        tdImg.className = 'py-4';
+                        const imgDiv = document.createElement('div');
+                        imgDiv.className = 'w-16 h-20 bg-gray-100 overflow-hidden shadow-sm border border-gray-100 group-hover:border-gray-300 transition-colors';
+                        const img = document.createElement('img');
+                        img.alt = 'Product Image';
+                        img.className = 'w-full h-full object-cover';
+                        img.src = imgSrc;
+                        imgDiv.appendChild(img);
+                        tdImg.appendChild(imgDiv);
+
+                        const tdName = document.createElement('td');
+                        tdName.className = 'py-4 font-serif text-lg text-aime-charcoal align-middle';
+                        tdName.textContent = p.name;
+
+                        const tdPrice = document.createElement('td');
+                        tdPrice.className = 'py-4 text-gray-500 align-middle';
+                        tdPrice.textContent = formattedPrice;
+
+                        const tdAction = document.createElement('td');
+                        tdAction.className = 'py-4 text-right align-middle pr-4';
+                        const btn = document.createElement('button');
+                        btn.className = 'text-xs text-red-500 hover:text-white hover:bg-red-500 border border-transparent hover:border-red-500 px-3 py-1.5 rounded tracking-widest font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-300 cursor-pointer';
+                        btn.setAttribute('data-action', 'delete');
+                        btn.setAttribute('data-id', p.id);
+                        btn.textContent = 'DELETE';
+                        tdAction.appendChild(btn);
+
+                        tr.appendChild(tdImg);
+                        tr.appendChild(tdName);
+                        tr.appendChild(tdPrice);
+                        tr.appendChild(tdAction);
+
+                        fragment.appendChild(tr);
+                    });
+
+                    DOM.listBody.appendChild(fragment);
+                },
+
+                setUploadState(isLoading) {
+                    DOM.uploadBtn.disabled = isLoading;
+                    if (isLoading) {
+                        DOM.btnText.textContent = 'UPLOADING...';
+                        DOM.btnSpinner.classList.remove('hidden');
+                        DOM.uploadBtn.classList.add('opacity-50', 'cursor-wait');
+                    } else {
+                        DOM.btnText.textContent = 'UPLOAD PRODUCT';
+                        DOM.btnSpinner.classList.add('hidden');
+                        DOM.uploadBtn.classList.remove('opacity-50', 'cursor-wait');
+                    }
+                },
+
+                showToast(message, type = 'success') {
+                    const toast = document.createElement('div');
+                    const isSuccess = type === 'success';
+                    const bgColor = isSuccess ? 'bg-green-600' : 'bg-red-500';
+                    const iconPath = isSuccess
+                        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />'
+                        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+
+                    toast.className = `flex items-center gap-3 ${bgColor} text-white px-5 py-3.5 rounded shadow-lg text-sm tracking-wide transform transition-all duration-300 translate-y-4 opacity-0 pointer-events-auto`;
+                    toast.innerHTML = `
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            ${iconPath}
+                        </svg>
+                        <span></span>
+                    `;
+                    toast.querySelector('span').textContent = message;
+
+                    DOM.toastContainer.appendChild(toast);
+
+                    requestAnimationFrame(() => {
+                        toast.classList.remove('translate-y-4', 'opacity-0');
+                    });
+
+                    setTimeout(() => {
+                        toast.classList.add('opacity-0', 'translate-y-2');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 4000);
+                },
+
+                showConfirmModal(productId) {
+                    state.pendingDeleteId = productId;
+                    DOM.confirmModal.classList.remove('hidden');
+                },
+
+                hideConfirmModal() {
+                    state.pendingDeleteId = null;
+                    DOM.confirmModal.classList.add('hidden');
+                }
+            };
+
+            // 5. User Event Handlers Module
+            const Handlers = {
+                async initializeData() {
+                    UI.showLoading();
+                    try {
+                        const products = await API.fetchProducts();
+                        UI.renderProducts(products);
+                    } catch (err) {
+                        console.error('Fetch error:', err);
+                        UI.showError(err.message || 'Unable to load products. Please check your connection.');
+                        UI.showToast(err.message || 'Failed to connect to server.', 'error');
+                    }
+                },
+
+                async onListInteraction(e) {
+                    const btn = e.target.closest('[data-action="delete"]');
+                    if (!btn) return;
+
+                    const id = btn.dataset.id;
+                    if (!id) return;
+
+                    UI.showConfirmModal(id);
+                },
+
+                async onConfirmDelete() {
+                    if (!state.pendingDeleteId) return;
+
+                    const id = state.pendingDeleteId;
+                    UI.hideConfirmModal();
+
+                    try {
+                        await API.deleteProduct(id);
+                        UI.showToast('Product successfully deleted.');
+                        await Handlers.initializeData();
+                    } catch (err) {
+                        console.error('Delete error:', err);
+                        UI.showToast(err.message || 'Failed to delete the product.', 'error');
+                    }
+                },
+
+                async onFormSubmit(e) {
+                    e.preventDefault();
+
+                    // Clear previous errors
+                    Validation.clearErrors();
+
+                    // Validate all fields
+                    const nameError = Validation.validateName(DOM.inputs.name.value);
+                    const priceError = Validation.validatePrice(DOM.inputs.price.value);
+                    const descError = Validation.validateDescription(DOM.inputs.desc.value);
+                    const finishesError = Validation.validateFinishes(DOM.inputs.finishes.value);
+                    const imageError = Validation.validateImage(DOM.inputs.image.files[0]);
+
+                    if (nameError) Validation.displayError('name', nameError);
+                    if (priceError) Validation.displayError('price', priceError);
+                    if (descError) Validation.displayError('desc', descError);
+                    if (finishesError) Validation.displayError('finishes', finishesError);
+                    if (imageError) Validation.displayError('image', imageError);
+
+                    if (nameError || priceError || descError || finishesError || imageError) {
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('name', DOM.inputs.name.value.trim());
+                    formData.append('price', DOM.inputs.price.value);
+                    formData.append('description', DOM.inputs.desc.value.trim());
+                    formData.append('hardware_finishes', DOM.inputs.finishes.value.trim());
+                    formData.append('image', DOM.inputs.image.files[0]);
+
+                    UI.setUploadState(true);
+
+                    try {
+                        await API.createProduct(formData);
+                        UI.showToast('Product successfully added to catalog!');
+                        DOM.form.reset();
+                        document.getElementById('desc-count').textContent = '0';
+                        await Handlers.initializeData();
+                    } catch (err) {
+                        console.error('Upload error:', err);
+                        UI.showToast(err.message || 'An error occurred during creation.', 'error');
+                    } finally {
+                        UI.setUploadState(false);
+                    }
+                },
+
+                onDescriptionInput() {
+                    const count = DOM.inputs.desc.value.length;
+                    document.getElementById('desc-count').textContent = count;
+                }
+            };
+
+            // 6. App Initialization
+            return {
+                init() {
+                    // Form events
+                    DOM.form.addEventListener('submit', Handlers.onFormSubmit);
+                    DOM.inputs.desc.addEventListener('input', Handlers.onDescriptionInput);
+
+                    // List events
+                    DOM.listBody.addEventListener('click', Handlers.onListInteraction);
+                    DOM.refreshBtn.addEventListener('click', () => Handlers.initializeData());
+
+                    // Modal events
+                    DOM.confirmCancel.addEventListener('click', () => UI.hideConfirmModal());
+                    DOM.confirmDelete.addEventListener('click', () => Handlers.onConfirmDelete());
+
+                    // Initialize data
+                    Handlers.initializeData();
+                }
+            };
+        })();
+
+        // Bootstrap on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', AdminApp.init);
+        } else {
+            AdminApp.init();
+        }
+    </script>
+</body>
+
+</html>

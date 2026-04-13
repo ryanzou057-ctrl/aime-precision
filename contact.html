@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | AIME PRECISION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'aime-beige': '#E5E5E1', // Light Warm Grey
+                        'aime-black': '#1A1A1A', // Charcoal Black
+                        'aime-dark-grey': '#333333',
+                        'aime-grey': '#666666',
+                        'aime-green': '#2D4F36', // Forest Green
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [data-lang-cn] { display: none; }
+        html.lang-cn [data-lang-en] { display: none; }
+        html.lang-cn [data-lang-cn] { display: block; }
+        
+        .geometric-bg {
+            background-image: linear-gradient(30deg, #E5E5E1 12%, transparent 12.5%, transparent 87%, #E5E5E1 87.5%, #E5E5E1),
+            linear-gradient(150deg, #E5E5E1 12%, transparent 12.5%, transparent 87%, #E5E5E1 87.5%, #E5E5E1),
+            linear-gradient(30deg, #E5E5E1 12%, transparent 12.5%, transparent 87%, #E5E5E1 87.5%, #E5E5E1),
+            linear-gradient(150deg, #E5E5E1 12%, transparent 12.5%, transparent 87%, #E5E5E1 87.5%, #E5E5E1),
+            linear-gradient(60deg, #D1D1D1 25%, transparent 25.5%, transparent 75%, #D1D1D1 75%, #D1D1D1),
+            linear-gradient(60deg, #D1D1D1 25%, transparent 25.5%, transparent 75%, #D1D1D1 75%, #D1D1D1);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+            opacity: 0.2;
+        }
+        .border-fine { border: 1px solid rgba(26, 26, 26, 0.1); }
+    </style>
+</head>
+<body class="bg-aime-beige text-aime-black font-sans selection:bg-aime-green selection:text-white min-h-screen flex flex-col">
+
+    <!-- Geometric Background Layer -->
+    <div class="fixed inset-0 geometric-bg pointer-events-none z-0"></div>
+
+    <!-- Header -->
+    <nav id="header" class="fixed top-0 w-full z-50 bg-aime-black/90 backdrop-blur-md py-4 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center text-white">
+            <div class="flex items-center gap-12">
+                <a href="index.html" class="text-3xl font-display font-bold tracking-tighter">AIME</a>
+                <div class="hidden md:flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em]">
+                    <a href="index.html" class="hover:text-aime-green transition-colors">
+                        <span data-lang-en>Collection</span><span data-lang-cn>系列</span>
+                    </a>
+                    <a href="shop.html" class="hover:text-aime-green transition-colors">
+                        <span data-lang-en>Shop Craft</span><span data-lang-cn>产品中心</span>
+                    </a>
+                    <a href="diy.html" class="hover:text-aime-green transition-colors">
+                        <span data-lang-en>DIY Custom</span><span data-lang-cn>定制页面</span>
+                    </a>
+                    <a href="contact.html" class="text-aime-green transition-colors">
+                        <span data-lang-en>Contact</span><span data-lang-cn>联系我们</span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 text-[10px] font-bold tracking-widest">
+                    <button onclick="setLanguage('cn')" class="hover:text-aime-green transition-colors">CN</button>
+                    <span class="opacity-20">|</span>
+                    <button onclick="setLanguage('en')" class="hover:text-aime-green transition-colors">EN</button>
+                </div>
+                <button class="p-2 hover:text-aime-green transition-colors"><i data-lucide="shopping-bag" class="w-5 h-5"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-grow pt-40 pb-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <!-- Title Section -->
+            <div class="mb-20">
+                <p class="text-aime-green font-bold text-[10px] uppercase tracking-[0.3em] mb-4">Inquiry & Support</p>
+                <h1 class="text-8xl font-display font-bold tracking-tighter leading-none uppercase">
+                    <span data-lang-en>GET IN TOUCH</span><span data-lang-cn>联系我们</span>
+                </h1>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-24">
+                <!-- Left Column: Contact Info -->
+                <div class="space-y-16">
+                    <div class="space-y-6">
+                        <!-- Office Input -->
+                        <div class="group relative bg-black/[0.03] rounded-md border-b border-black/10 focus-within:border-aime-green focus-within:bg-black/[0.05] transition-all duration-300">
+                            <label class="absolute top-4 left-6 text-[10px] font-sans font-light tracking-widest uppercase text-aime-green">
+                                <span data-lang-en>Office</span><span data-lang-cn>办公地址</span>
+                            </label>
+                            <input type="text" placeholder="Enter your office location" class="w-full bg-transparent pt-10 pb-5 px-6 text-lg font-medium text-aime-black focus:outline-none placeholder:text-black/20">
+                        </div>
+                        
+                        <!-- Direct Line Input -->
+                        <div class="group relative bg-black/[0.03] rounded-md border-b border-black/10 focus-within:border-aime-green focus-within:bg-black/[0.05] transition-all duration-300">
+                            <label class="absolute top-4 left-6 text-[10px] font-sans font-light tracking-widest uppercase text-aime-green">
+                                <span data-lang-en>Direct Line</span><span data-lang-cn>直线电话</span>
+                            </label>
+                            <input type="tel" placeholder="Enter your direct line" class="w-full bg-transparent pt-10 pb-5 px-6 text-lg font-medium text-aime-black focus:outline-none placeholder:text-black/20">
+                        </div>
+
+                        <!-- Email Input -->
+                        <div class="group relative bg-black/[0.03] rounded-md border-b border-black/10 focus-within:border-aime-green focus-within:bg-black/[0.05] transition-all duration-300">
+                            <label class="absolute top-4 left-6 text-[10px] font-sans font-light tracking-widest uppercase text-aime-green">
+                                <span data-lang-en>Email</span><span data-lang-cn>电子邮箱</span>
+                            </label>
+                            <input type="email" placeholder="Enter your email address" class="w-full bg-transparent pt-10 pb-5 px-6 text-lg font-medium text-aime-black focus:outline-none placeholder:text-black/20">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-4">
+                            <button type="button" class="px-12 py-5 bg-aime-black text-white rounded-full text-[10px] font-bold tracking-[0.3em] uppercase hover:bg-aime-green transition-colors">
+                                <span data-lang-en>SEND INQUIRY</span><span data-lang-cn>发送咨询</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <p class="text-[10px] uppercase tracking-widest text-aime-black/30">Connect</p>
+                        <div class="flex gap-8">
+                            <a href="#" class="group flex items-center gap-3 text-xs font-bold tracking-widest uppercase hover:text-aime-green transition-colors">
+                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                WeChat
+                            </a>
+                            <a href="#" class="group flex items-center gap-3 text-xs font-bold tracking-widest uppercase hover:text-aime-green transition-colors">
+                                <i data-lucide="instagram" class="w-5 h-5"></i>
+                                Instagram
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Form -->
+                <div class="bg-aime-black p-12 shadow-2xl border-t-4 border-aime-green text-white">
+                    <form id="contact-form" class="space-y-10" onsubmit="handleFormSubmit(event)">
+                        <div class="space-y-4">
+                            <label class="text-[10px] font-bold tracking-widest uppercase text-white/40">
+                                <span data-lang-en>Full Name</span><span data-lang-cn>姓名</span>
+                            </label>
+                            <input type="text" required placeholder="YOUR NAME" class="w-full bg-transparent border-b border-white/10 py-4 text-xs tracking-widest focus:outline-none focus:border-aime-green transition-colors">
+                        </div>
+                        <div class="space-y-4">
+                            <label class="text-[10px] font-bold tracking-widest uppercase text-white/40">
+                                <span data-lang-en>Email Address</span><span data-lang-cn>电子邮箱</span>
+                            </label>
+                            <input type="email" required placeholder="EMAIL@EXAMPLE.COM" class="w-full bg-transparent border-b border-white/10 py-4 text-xs tracking-widest focus:outline-none focus:border-aime-green transition-colors">
+                        </div>
+                        <div class="space-y-4">
+                            <label class="text-[10px] font-bold tracking-widest uppercase text-white/40">
+                                <span data-lang-en>Project Description</span><span data-lang-cn>需求描述</span>
+                            </label>
+                            <textarea id="message-field" required placeholder="TELL US ABOUT YOUR PROJECT" rows="5" class="w-full bg-transparent border-b border-white/10 py-4 text-xs tracking-widest focus:outline-none focus:border-aime-green transition-colors"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-white text-aime-black py-6 text-[10px] font-bold tracking-widest uppercase hover:bg-aime-green hover:text-white transition-all flex items-center justify-center gap-4 group">
+                            <span data-lang-en>Send Inquiry</span><span data-lang-cn>发送咨询</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-aime-black text-white py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <p class="text-[10px] tracking-[0.3em] text-white/10 uppercase">© 2026 AIME PRECISION. All Rights Reserved.</p>
+            <div class="flex gap-8 text-[10px] tracking-[0.2em] text-white/20">
+                <a href="#" class="hover:text-white transition-colors uppercase">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors uppercase">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // Language Logic
+        function setLanguage(lang) {
+            document.documentElement.className = 'lang-' + lang;
+            localStorage.setItem('aime-lang', lang);
+        }
+        
+        const savedLang = localStorage.getItem('aime-lang') || 'en';
+        setLanguage(savedLang);
+
+        // DIY Parameter Integration
+        function parseParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const config = urlParams.get('config');
+            if (config) {
+                const messageField = document.getElementById('message-field');
+                const lang = localStorage.getItem('aime-lang') || 'en';
+                const prefix = lang === 'cn' ? '我的定制配置：' : 'My custom configuration: ';
+                messageField.value = prefix + decodeURIComponent(config) + '\n\n';
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const lang = localStorage.getItem('aime-lang') || 'en';
+            const successMsg = lang === 'cn' ? '咨询已发送！我们的设计师将尽快与您联系。' : 'Inquiry sent! Our designers will contact you soon.';
+            alert(successMsg);
+            e.target.reset();
+        }
+
+        // Image Fallback Logic
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                const keywords = ['concrete', 'grey-marble', 'architectural-glass', 'minimalist-interior'];
+                const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];
+                e.target.src = `https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1200&q=${randomKeyword}`;
+                e.target.onerror = null; // Prevent infinite loops
+            }
+        }, true);
+
+        // Initialize
+        parseParams();
+    </script>
+</body>
+</html>
