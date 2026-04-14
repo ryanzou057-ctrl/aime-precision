@@ -1,0 +1,45 @@
+# AIME Precision - Nginx 配置示例
+# 适用于宝塔面板
+
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    root /www/wwwroot/aime-precision/php/public;
+    index index.php index.html;
+
+    # PHP处理
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # API路由
+    location /api/ {
+        try_files $uri /api/index.php?$query_string;
+    }
+
+    # 静态资源缓存
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # 上传目录
+    location /uploads/ {
+        internal;
+        alias /www/wwwroot/aime-precision/php/public/uploads/;
+    }
+
+    # 前端路由 (SPA)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 安全头
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+}
